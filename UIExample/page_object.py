@@ -4,29 +4,18 @@ from playwright.sync_api import Page
 class LoginPage:
     def __init__(self, page: Page):
         self.page = page
-        self.url = "https://demoqa.com/login"
+        self.username_input = page.locator('input[id="userName"]')
+        self.password_input = page.locator('input[id="password"]')
+        self.login_button = page.locator('button[id="login"]')
+        self.error_message = page.locator('#name')
 
-        # Selectors
-        self.username_input = "#userName"
-        self.password_input = "#password"
-        self.login_button = "#login"
-        self.logout_button = "#submit"
-        self.error_message = "#name"
+    def navigate(self):
+        self.page.goto("https://demoqa.com/login")
 
-    def load(self):
-        self.page.goto(self.url)
+    def login(self, username: str, password: str):
+        self.username_input.fill(username)
+        self.password_input.fill(password)
+        self.login_button.click()
 
-    def enter_username(self, username: str):
-        self.page.fill(self.username_input, username)
-
-    def enter_password(self, password: str):
-        self.page.fill(self.password_input, password)
-
-    def click_login(self):
-        self.page.click(self.login_button)
-
-    def get_error_message(self) -> str:
-        return self.page.inner_text(self.error_message)
-
-    def is_logout_displayed(self) -> bool:
-        return self.page.is_visible(self.logout_button)
+    def get_error_message(self):
+        return self.error_message.text_content()
